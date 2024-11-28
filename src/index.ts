@@ -21,6 +21,17 @@ export function err<E = unknown>(value: E): Result<never, E> {
 }
 
 /**
+ * Check if value is a result value
+ * @param value Value to check
+ * @returns If value is a result value
+ */
+export function isResult<T, E = unknown>(
+  value: unknown
+): value is Result<T, E> {
+  return isOk<T>(value) || isErr<E>(value);
+}
+
+/**
  * Check if value is an ok result
  * @param value Value to check
  * @returns If value is an ok result
@@ -82,7 +93,7 @@ export function ifOkOr<
  * @param fn Mapping function to run on ok result
  * @returns Result containing mapped value
  */
-export function mapResult<T, U, E = unknown>(
+export function map<T, U, E = unknown>(
   result: Result<T, E>,
   fn: (value: T) => U
 ): Result<U, E> {
@@ -90,4 +101,26 @@ export function mapResult<T, U, E = unknown>(
     return { Ok: fn(result.Ok) };
   }
   return result;
+}
+
+/**
+ * Retrieve the value from an ok result
+ *
+ * Will throw if `result` is an err result
+ *
+ * @param result Result to unwrap the value from
+ * @returns The underlying value of an ok result
+ */
+export function unwrap<T, E = unknown>(result: unknown): T {
+  if (isResult<T, E>(result)) {
+    if (isErr(result)) {
+      throw new Error(
+        `Unwrapping an error result: ${JSON.stringify(result.Err)}`
+      );
+    }
+
+    return result.Ok;
+  }
+
+  throw new Error(`Unwrapping a non result value: ${JSON.stringify(result)}`);
 }

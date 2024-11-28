@@ -1,38 +1,44 @@
 import { test, expect, describe, vi } from "vitest";
-import { err, ifOk, ifOkOr, isErr, isOk, mapResult, ok, Result } from ".";
+import * as RsResult from ".";
 
 describe("ok input", () => {
-  const inputJson = JSON.stringify(ok(123));
-  const inputResult: Result<number> = JSON.parse(inputJson);
+  const inputJson = JSON.stringify(RsResult.ok(123));
+  const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
 
   describe("with extra keys", () => {
     const inputJson = JSON.stringify(
-      Object.assign({}, ok(123), { extraKey: true })
+      Object.assign({}, RsResult.ok(123), { extraKey: true })
     );
-    const inputResult: Result<number> = JSON.parse(inputJson);
+    const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
 
     test("is not ok", () => {
-      expect(isOk(inputResult)).toBeFalsy();
+      expect(RsResult.isOk(inputResult)).toBeFalsy();
     });
   });
 
   test("is ok", () => {
-    expect(isOk(inputResult)).toBeTruthy();
+    expect(RsResult.isOk(inputResult)).toBeTruthy();
   });
 
   test("is not err", () => {
-    expect(isErr(inputResult)).toBeFalsy();
+    expect(RsResult.isErr(inputResult)).toBeFalsy();
   });
 
   test("maps to new value", () => {
-    expect(mapResult(inputResult, (value) => value * 2)).toStrictEqual(ok(246));
+    expect(RsResult.map(inputResult, (value) => value * 2)).toStrictEqual(
+      RsResult.ok(246)
+    );
+  });
+
+  test("unwraps with value", () => {
+    expect(RsResult.unwrap(inputResult)).toBe(123);
   });
 
   describe("ifOk", () => {
     test("runs callback", () => {
       const fn = vi.fn((value) => value);
 
-      ifOk(inputResult, fn);
+      RsResult.ifOk(inputResult, fn);
 
       expect(fn).toBeCalledWith(123);
     });
@@ -43,7 +49,7 @@ describe("ok input", () => {
       const okFn = vi.fn();
       const errFn = vi.fn();
 
-      ifOkOr(inputResult, okFn, errFn);
+      RsResult.ifOkOr(inputResult, okFn, errFn);
 
       expect(okFn).toBeCalledWith(123);
       expect(errFn).not.toBeCalled();
@@ -52,39 +58,50 @@ describe("ok input", () => {
 });
 
 describe("err input", () => {
-  const inputJson = JSON.stringify(err("error message"));
-  const inputResult: Result<number> = JSON.parse(inputJson);
+  const inputJson = JSON.stringify(RsResult.err("error message"));
+  const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
 
   describe("with extra keys", () => {
     const inputJson = JSON.stringify(
-      Object.assign({}, err("error message"), { extraKey: true })
+      Object.assign({}, RsResult.err("error message"), { extraKey: true })
     );
-    const inputResult: Result<number> = JSON.parse(inputJson);
+    const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
 
     test("is not err", () => {
-      expect(isErr(inputResult)).toBeFalsy();
+      expect(RsResult.isErr(inputResult)).toBeFalsy();
     });
   });
 
   test("is err", () => {
-    expect(isErr(inputResult)).toBeTruthy();
+    expect(RsResult.isErr(inputResult)).toBeTruthy();
   });
 
   test("is not ok", () => {
-    expect(isOk(inputResult)).toBeFalsy();
+    expect(RsResult.isOk(inputResult)).toBeFalsy();
   });
 
   test("doesn't map", () => {
-    expect(mapResult(inputResult, (value) => value * 2)).toStrictEqual(
-      err("error message")
-    );
+    const newResult = RsResult.map(inputResult, (value) => value * 2);
+
+    expect(Object.is(inputResult, newResult)).toBeTruthy();
+  });
+
+  test("unwrapping throws", () => {
+    try {
+      RsResult.unwrap(inputResult);
+      expect.fail("Should have thrown");
+    } catch (e) {
+      expect(e).toStrictEqual(
+        new Error(`Unwrapping an error result: "error message"`)
+      );
+    }
   });
 
   describe("ifOk", () => {
     test("doesn't run callback", () => {
       const fn = vi.fn((value) => value);
 
-      ifOk(inputResult, fn);
+      RsResult.ifOk(inputResult, fn);
 
       expect(fn).not.toBeCalled();
     });
@@ -95,7 +112,7 @@ describe("err input", () => {
       const okFn = vi.fn();
       const errFn = vi.fn();
 
-      ifOkOr(inputResult, okFn, errFn);
+      RsResult.ifOkOr(inputResult, okFn, errFn);
 
       expect(okFn).not.toBeCalled();
       expect(errFn).toBeCalledWith("error message");
@@ -105,6 +122,15 @@ describe("err input", () => {
 
 describe("non result input", () => {
   test("is not ok", () => {
-    expect(isOk({})).toBeFalsy();
+    expect(RsResult.isOk({})).toBeFalsy();
+  });
+
+  test("unwrapping throws", () => {
+    try {
+      RsResult.unwrap(123);
+      expect.fail("Should have thrown");
+    } catch (e) {
+      expect(e).toStrictEqual(new Error(`Unwrapping a non result value: 123`));
+    }
   });
 });
