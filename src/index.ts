@@ -59,11 +59,13 @@ export function isErr<E = unknown>(value: unknown): value is Err<E> {
  * @param fn Function to run if value is an ok result
  */
 export function ifOk<T, F extends (value: T) => void | Promise<void>>(
-  value: Result<T>,
+  value: unknown,
   fn: F
 ): ReturnType<F> | void {
-  if (isOk(value)) {
-    return fn(value.Ok) as ReturnType<F>;
+  if (isResult<T>(value)) {
+    if (isOk(value)) {
+      return fn(value.Ok) as ReturnType<F>;
+    }
   }
 
   return undefined as ReturnType<F>; // Explicitly cast `undefined` to match the type
