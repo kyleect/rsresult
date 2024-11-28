@@ -7,7 +7,9 @@ describe("ok input", () => {
   const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
 
   test("has correct type", () => {
-    expectTypeOf(expectedResult).toMatchTypeOf<RsResult.Result<number>>();
+    expectTypeOf(expectedResult).toMatchTypeOf<
+      RsResult.Result<number, never>
+    >();
   });
 
   describe("with extra keys", () => {

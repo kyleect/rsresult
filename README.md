@@ -26,7 +26,7 @@ npm install rsresult
 import assert from "node:assert";
 import * as RsResult from "rsresult";
 
-const success: RsResult.Result<number> = ok(123);
+const success: RsResult.Result<number, never> = ok(123);
 
 assert(RsResult.isOk(success)); // passes
 assert(RsResult.isErr(success)); // fails

@@ -7,7 +7,7 @@ export type Result<T, E = unknown> = Ok<T> | Err<E>;
  * @param value Value to wrap
  * @returns An ok wrapped value result
  */
-export function ok<T>(value: T): Result<T> {
+export function ok<T>(value: T): Result<T, never> {
   return { Ok: value };
 }
 
