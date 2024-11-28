@@ -113,7 +113,11 @@ export function map<T, U, E = unknown>(
  * @param result Result to unwrap the value from
  * @returns The underlying value of an ok result
  */
-export function unwrap<T, E = unknown>(result: unknown): T {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function unwrap<T, E>(result: Ok<T>): T;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function unwrap<T, E>(result: Err<E>): never;
+export function unwrap<T, E = unknown>(result: Result<T, E>): T {
   if (isResult<T, E>(result)) {
     if (isErr(result)) {
       throw new Error(

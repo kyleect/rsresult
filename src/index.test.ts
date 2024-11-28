@@ -1,9 +1,14 @@
-import { test, expect, describe, vi } from "vitest";
+import { test, expect, describe, vi, expectTypeOf } from "vitest";
 import * as RsResult from ".";
 
 describe("ok input", () => {
-  const inputJson = JSON.stringify(RsResult.ok(123));
+  const expectedResult = RsResult.ok(123);
+  const inputJson = JSON.stringify(expectedResult);
   const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
+
+  test("has correct type", () => {
+    expectTypeOf(expectedResult).toMatchTypeOf<RsResult.Result<number>>();
+  });
 
   describe("with extra keys", () => {
     const inputJson = JSON.stringify(
@@ -31,6 +36,7 @@ describe("ok input", () => {
   });
 
   test("unwraps with value", () => {
+    // @ts-expect-error Invalid typed value for the test
     expect(RsResult.unwrap(inputResult)).toBe(123);
   });
 
@@ -58,14 +64,21 @@ describe("ok input", () => {
 });
 
 describe("err input", () => {
-  const inputJson = JSON.stringify(RsResult.err("error message"));
-  const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
+  const expectedResult = RsResult.err("error message");
+  const inputJson = JSON.stringify(expectedResult);
+  const inputResult: RsResult.Result<never, string> = JSON.parse(inputJson);
+
+  test("has correct type", () => {
+    expectTypeOf(expectedResult).toMatchTypeOf<
+      RsResult.Result<never, string>
+    >();
+  });
 
   describe("with extra keys", () => {
     const inputJson = JSON.stringify(
       Object.assign({}, RsResult.err("error message"), { extraKey: true })
     );
-    const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
+    const inputResult: RsResult.Result<never, string> = JSON.parse(inputJson);
 
     test("is not err", () => {
       expect(RsResult.isErr(inputResult)).toBeFalsy();
@@ -88,6 +101,7 @@ describe("err input", () => {
 
   test("unwrapping throws", () => {
     try {
+      // @ts-expect-error Invalid typed value for the test
       RsResult.unwrap(inputResult);
       expect.fail("Should have thrown");
     } catch (e) {
@@ -127,6 +141,7 @@ describe("non result input", () => {
 
   test("unwrapping throws", () => {
     try {
+      // @ts-expect-error Invalid typed value for the test
       RsResult.unwrap(123);
       expect.fail("Should have thrown");
     } catch (e) {
