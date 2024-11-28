@@ -1,6 +1,6 @@
 # rsresult
 
-A library for working with Rust `Result` serialized to JSON using serde_json.
+A library to work with [serde_json](https://github.com/serde-rs/json) serialized `Result` objects
 
 ```json
 {
@@ -39,4 +39,6 @@ const failed: Result<never, string> = err("Error message");
 
 assert(isErr(failed)); // passes
 assert(isOk(failed)); // fails
+
+assert(unwrap(failed) === 246); // Throws
 ```

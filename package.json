@@ -1,6 +1,6 @@
 {
-  "name": "rs_result_json",
-  "description": "A library to work with JSON serialize Rust Results",
+  "name": "rsresult",
+  "description": "A library to work with serde_json serialized `Result` objects",
   "author": "Kylee Tilley <kyleetilley@gmail.com>",
   "license": "MIT",
   "private": true,
