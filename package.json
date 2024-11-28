@@ -1,0 +1,46 @@
+{
+  "name": "rs_result_json",
+  "description": "A library to work with JSON serialize Rust Results",
+  "author": "Kylee Tilley <kyleetilley@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "module": "dist/index.js",
+  "main": "dist/index.umd.cjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs"
+    }
+  },
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "format:check": "prettier . --check",
+    "format:write": "prettier . --write",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "build": "vite build -c ./vite.config.js",
+    "preview": "vite preview",
+    "test": "vitest run --config vitest.config.js",
+    "test:watch": "vitest --config vitest.config.js",
+    "coverage": "npm run test -- --coverage",
+    "coverage:watch": "npm run test:watch -- --coverage",
+    "mutants": "npx stryker run",
+    "verify": "npm run lint && npm run format:check && npm run coverage && npm run mutants && npm run build"
+  },
+  "devDependencies": {
+    "@stryker-mutator/typescript-checker": "^8.6.0",
+    "@stryker-mutator/vitest-runner": "^8.6.0",
+    "@vitest/coverage-v8": "^2.1.6",
+    "eslint": "9.15.0",
+    "prettier": "3.4.1",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "8.16.0",
+    "vite": "^6.0.1",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^2.1.6"
+  }
+}
