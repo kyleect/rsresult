@@ -19,7 +19,7 @@ export default [
     },
   },
   {
-    ignores: ["dist/**/*.*"],
+    ignores: ["dist/**/*.*", "docs/**/*.*"],
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
