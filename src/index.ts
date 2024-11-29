@@ -1,15 +1,15 @@
 /**
- * A successful result value
+ * A successful result
  */
 type Ok<T> = { Ok: T };
 
 /**
- * An error result value
+ * An errored result
  */
-type Err<E = unknown> = { Err: E };
+type Err<E> = { Err: E };
 
 /**
- * A value representing either a success or failure result
+ * The result of an failable operation
  */
 export type Result<T, E = unknown> = Ok<T> | Err<E>;
 
@@ -18,7 +18,7 @@ export type Result<T, E = unknown> = Ok<T> | Err<E>;
  * @param value Value to wrap
  * @returns An ok wrapped value result
  */
-export function ok<T>(value: T): Result<T, never> {
+export function ok<T>(value: T): Ok<T> {
   return { Ok: value };
 }
 
@@ -27,7 +27,7 @@ export function ok<T>(value: T): Result<T, never> {
  * @param value Value to wrap
  * @returns An error wrapped value result
  */
-export function err<E = unknown>(value: E): Result<never, E> {
+export function err<E = unknown>(value: E): Err<E> {
   return { Err: value };
 }
 
@@ -73,13 +73,9 @@ export function ifOk<T, F extends (value: T) => void | Promise<void>>(
   value: unknown,
   fn: F
 ): ReturnType<F> | void {
-  if (isResult<T>(value)) {
-    if (isOk(value)) {
-      return fn(value.Ok) as ReturnType<F>;
-    }
+  if (isOk<T>(value)) {
+    return fn(value.Ok) as ReturnType<F>;
   }
-
-  return undefined as ReturnType<F>; // Explicitly cast `undefined` to match the type
 }
 
 /**
@@ -93,11 +89,7 @@ export function ifOkOr<
   F extends (value: T) => void | Promise<void>,
   E extends (value: unknown) => void | Promise<void>,
 >(value: Result<T>, okFn: F, errFn: E) {
-  if (isOk(value)) {
-    return okFn(value.Ok);
-  } else {
-    return errFn(value.Err);
-  }
+  return isOk(value) ? okFn(value.Ok) : errFn(value.Err);
 }
 
 /**
@@ -118,7 +110,11 @@ export function map<T, U, E = unknown>(
 
 // This function overide produces a type error if an error result is passed
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function unwrap<T, E = unknown>(result: Err<E>): never;
+export function unwrap<T, E = unknown>(result: Result<never, E>): never;
+
+// This function overide produces a type error if an error result is passed
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function unwrap<T, E = unknown>(result: Result<T, never>): T;
 
 /**
  * Retrieve the value from an ok result
@@ -128,16 +124,16 @@ export function unwrap<T, E = unknown>(result: Err<E>): never;
  * @param result Result to unwrap the value from
  * @returns The underlying value of an ok result
  */
-export function unwrap<T, E = unknown>(result: Result<T, E>): T {
-  if (isResult<T, E>(result)) {
-    if (isErr(result)) {
-      throw new Error(
-        `Unwrapping an error result: ${JSON.stringify(result.Err)}`
-      );
-    }
-
-    return result.Ok;
+export function unwrap<T, E = unknown>(result: unknown): T {
+  if (!isResult<T, E>(result)) {
+    throw new Error(`Unwrapping a non-result value: ${JSON.stringify(result)}`);
   }
 
-  throw new Error(`Unwrapping a non result value: ${JSON.stringify(result)}`);
+  if (isErr(result)) {
+    throw new Error(
+      `Unwrapping an error result: ${JSON.stringify(result.Err)}`
+    );
+  }
+
+  return result.Ok;
 }

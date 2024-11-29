@@ -40,7 +40,6 @@ describe("ok input", () => {
   });
 
   test("unwraps with value", () => {
-    // @ts-expect-error Invalid typed value for the test
     expect(RsResult.unwrap(inputResult)).toBe(123);
   });
 
@@ -105,7 +104,6 @@ describe("err input", () => {
 
   test("unwrapping throws", () => {
     try {
-      // @ts-expect-error Invalid typed value for the test
       RsResult.unwrap(inputResult);
       expect.fail("Should have thrown");
     } catch (e) {
@@ -149,7 +147,7 @@ describe("non result input", () => {
       RsResult.unwrap(123);
       expect.fail("Should have thrown");
     } catch (e) {
-      expect(e).toStrictEqual(new Error(`Unwrapping a non result value: 123`));
+      expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
     }
   });
 });
