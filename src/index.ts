@@ -1,5 +1,16 @@
+/**
+ * A successful result value
+ */
 export type Ok<T> = { Ok: T };
+
+/**
+ * An error result value
+ */
 export type Err<E = unknown> = { Err: E };
+
+/**
+ * A value representing either a success or failure result
+ */
 export type Result<T, E = unknown> = Ok<T> | Err<E>;
 
 /**
@@ -105,6 +116,10 @@ export function map<T, U, E = unknown>(
   return result;
 }
 
+// This function overide produces a type error if an error result is passed
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function unwrap<T, E = unknown>(result: Err<E>): never;
+
 /**
  * Retrieve the value from an ok result
  *
@@ -113,10 +128,6 @@ export function map<T, U, E = unknown>(
  * @param result Result to unwrap the value from
  * @returns The underlying value of an ok result
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function unwrap<T, E>(result: Ok<T>): T;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function unwrap<T, E>(result: Err<E>): never;
 export function unwrap<T, E = unknown>(result: Result<T, E>): T {
   if (isResult<T, E>(result)) {
     if (isErr(result)) {
