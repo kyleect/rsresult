@@ -4,19 +4,21 @@ import * as RsResult from ".";
 describe("ok input", () => {
   const expectedResult = RsResult.ok(123);
   const inputJson = JSON.stringify(expectedResult);
-  const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
+  const inputResult: RsResult.Result<number, never> = JSON.parse(inputJson);
 
   test("has correct type", () => {
     expectTypeOf(expectedResult).toMatchTypeOf<
       RsResult.Result<number, never>
     >();
+
+    expectTypeOf(inputResult).toMatchTypeOf<RsResult.Result<number, never>>();
   });
 
   describe("with extra keys", () => {
     const inputJson = JSON.stringify(
       Object.assign({}, RsResult.ok(123), { extraKey: true })
     );
-    const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
+    const inputResult: RsResult.Result<number, never> = JSON.parse(inputJson);
 
     test("is not ok", () => {
       expect(RsResult.isOk(inputResult)).toBeFalsy();
