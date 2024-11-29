@@ -1,12 +1,12 @@
 /**
  * A successful result value
  */
-export type Ok<T> = { Ok: T };
+type Ok<T> = { Ok: T };
 
 /**
  * An error result value
  */
-export type Err<E = unknown> = { Err: E };
+type Err<E = unknown> = { Err: E };
 
 /**
  * A value representing either a success or failure result
