@@ -27,7 +27,7 @@ jobs:
       - name: Verify
         run: npm run verify
 
-      - name: Verify
+      - name: Build Docs
         run: npm run docs
 
       - name: Deploy 🚀
