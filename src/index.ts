@@ -69,12 +69,12 @@ export function isErr<E = unknown>(value: unknown): value is Err<E> {
  * @param value Value to check
  * @param fn Function to run if value is an ok result
  */
-export function ifOk<T, F extends (value: T) => void | Promise<void>>(
-  value: unknown,
-  fn: F
-): ReturnType<F> | void {
+export function ifOk<T>(
+  value: Result<T>,
+  fn: (value: T) => void | Promise<void>
+): ReturnType<typeof fn> | void {
   if (isOk<T>(value)) {
-    return fn(value.Ok) as ReturnType<F>;
+    return fn(value.Ok) as ReturnType<typeof fn>;
   }
 }
 
@@ -84,11 +84,11 @@ export function ifOk<T, F extends (value: T) => void | Promise<void>>(
  * @param okFn Function to run if value is an ok result
  * @param errFn Function to run if value is an err result
  */
-export function ifOkOr<
-  T,
-  F extends (value: T) => void | Promise<void>,
-  E extends (value: unknown) => void | Promise<void>,
->(value: Result<T>, okFn: F, errFn: E) {
+export function ifOkOr<T>(
+  value: Result<T>,
+  okFn: (value: T) => void | Promise<void>,
+  errFn: (value: unknown) => void | Promise<void>
+) {
   return isOk(value) ? okFn(value.Ok) : errFn(value.Err);
 }
 
@@ -116,6 +116,10 @@ export function unwrap<T, E = unknown>(result: Result<never, E>): never;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function unwrap<T, E = unknown>(result: Result<T, never>): T;
 
+// This function overide produces a type error if an error result is passed
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function unwrap<T, E = unknown>(result: Result<T, E>): T;
+
 /**
  * Retrieve the value from an ok result
  *
@@ -124,7 +128,7 @@ export function unwrap<T, E = unknown>(result: Result<T, never>): T;
  * @param result Result to unwrap the value from
  * @returns The underlying value of an ok result
  */
-export function unwrap<T, E = unknown>(result: unknown): T {
+export function unwrap<T, E = unknown>(result: Result<T, E>): T {
   if (!isResult<T, E>(result)) {
     throw new Error(`Unwrapping a non-result value: ${JSON.stringify(result)}`);
   }

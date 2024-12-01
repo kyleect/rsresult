@@ -1,6 +1,71 @@
 import { test, expect, describe, vi, expectTypeOf } from "vitest";
 import * as RsResult from ".";
 
+describe("result input", () => {
+  const expectedResult = RsResult.ok(123);
+  const inputJson = JSON.stringify(expectedResult);
+  const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
+
+  test("has correct type", () => {
+    expectTypeOf(expectedResult).toMatchTypeOf<
+      RsResult.Result<number, never>
+    >();
+
+    expectTypeOf(inputResult).toMatchTypeOf<RsResult.Result<number, unknown>>();
+  });
+
+  describe("with extra keys", () => {
+    const inputJson = JSON.stringify(
+      Object.assign({}, RsResult.ok(123), { extraKey: true })
+    );
+    const inputResult: RsResult.Result<number, never> = JSON.parse(inputJson);
+
+    test("is not ok", () => {
+      expect(RsResult.isOk(inputResult)).toBeFalsy();
+    });
+  });
+
+  test("is ok", () => {
+    expect(RsResult.isOk(inputResult)).toBeTruthy();
+  });
+
+  test("is not err", () => {
+    expect(RsResult.isErr(inputResult)).toBeFalsy();
+  });
+
+  test("maps to new value", () => {
+    expect(RsResult.map(inputResult, (value) => value * 2)).toStrictEqual(
+      RsResult.ok(246)
+    );
+  });
+
+  test("unwraps with value", () => {
+    expect(RsResult.unwrap(inputResult)).toBe(123);
+  });
+
+  describe("ifOk", () => {
+    test("runs callback", () => {
+      const fn = vi.fn((value) => value);
+
+      RsResult.ifOk(inputResult, fn);
+
+      expect(fn).toBeCalledWith(123);
+    });
+  });
+
+  describe("ifOkOr", () => {
+    test("runs callback", () => {
+      const okFn = vi.fn();
+      const errFn = vi.fn();
+
+      RsResult.ifOkOr(inputResult, okFn, errFn);
+
+      expect(okFn).toBeCalledWith(123);
+      expect(errFn).not.toBeCalled();
+    });
+  });
+});
+
 describe("ok input", () => {
   const expectedResult = RsResult.ok(123);
   const inputJson = JSON.stringify(expectedResult);
