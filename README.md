@@ -1,22 +1,10 @@
 # rsresult
 
-A library to work with [serde_json](https://github.com/serde-rs/json) serialized `Result` objects
-
-```json
-{
-  "Ok": 123
-}
-```
-
-```json
-{
-  "Err": "Error message"
-}
-```
+A library to work with [serde_json](https://github.com/serde-rs/json) serialized `Result` objects. This library provides functions for creating, checking, and manipulating results, simplifying error handling in your JavaScript projects.
 
 ## Installation
 
-```shell
+```bash
 npm install rsresult
 ```
 
@@ -26,7 +14,8 @@ npm install rsresult
 import assert from "node:assert";
 import * as RsResult from "rsresult";
 
-const success: RsResult.Result<number, never> = ok(123);
+// Successful Result
+const success: RsResult.Result<number, never> = RsResult.ok(123);
 
 assert(RsResult.isOk(success)); // passes
 assert(RsResult.isErr(success)); // fails
@@ -35,10 +24,29 @@ const mappedSuccess = RsResult.map(success, (value) => value * 2);
 
 assert(RsResult.unwrap(mappedSuccess) === 246);
 
-const failed: Result<never, string> = RsResult.err("Error message");
+// Failed Result
+const failed: RsResult.Result<never, string> = RsResult.err("Error message");
 
 assert(RsResult.isErr(failed)); // passes
 assert(RsResult.isOk(failed)); // fails
 
-assert(RsResult.unwrap(failed) === 246); // Throws
+try {
+  RsResult.unwrap(failed); // Throws an error
+} catch (error) {
+  assert(error instanceof Error); //This assertion will pass
+  assert(error.message.includes("Unwrapping an error result")); //This assertion will pass
+}
+
+//Example using ifOkOr
+RsResult.ifOk(success, (value) => console.log("Success:", value));
+
+RsResult.ifOkOr(
+  failed,
+  (value) => console.log("Success:", value),
+  (error) => console.error("Error:", error)
+);
 ```
+
+## License
+
+MIT
