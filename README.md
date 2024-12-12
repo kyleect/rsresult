@@ -25,12 +25,19 @@ const mappedSuccess = RsResult.map(success, (value) => value * 2);
 
 assert(RsResult.unwrap(mappedSuccess) === 246);
 
+try {
+  ResultRs.unwrapErr(success); // Throws an error
+} catch (error) {
+  assert(error instanceof Error);
+  assert(error.message.includes("Unwrapping an ok result: 123"));
+}
+
 // Failed Result
 const failed: RsResult.Result<never, string> = RsResult.err("Error message");
 
 // Map error results
 const mappedError = RsResult.mapErr(failed, (value) => `Error: ${value}`);
-assert(RsResult.unwrap(mappedError) === "Error: Error message"); // This assertion will pass
+assert(RsResult.unwrap(mappedError) === "Error: Error message");
 
 assert(RsResult.isErr(failed)); // passes
 assert(RsResult.isOk(failed)); // fails
@@ -38,9 +45,11 @@ assert(RsResult.isOk(failed)); // fails
 try {
   RsResult.unwrap(failed); // Throws an error
 } catch (error) {
-  assert(error instanceof Error); //This assertion will pass
-  assert(error.message.includes("Unwrapping an error result")); //This assertion will pass
+  assert(error instanceof Error);
+  assert(error.message.includes("Unwrapping an error result: Error message"));
 }
+
+assert(Results.unwrapErr(failed) === "Error message");
 
 //Example using ifOkOr
 RsResult.ifOk(success, (value) => console.log("Success:", value));

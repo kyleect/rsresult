@@ -191,3 +191,22 @@ export function unwrap<T, E = unknown>(result: Result<T, E>): T {
 
   return result.Ok;
 }
+
+/**
+ * Retrieve the underlying error from an `Err` result.
+ *
+ * @template E - The error type of the `Err` result.
+ * @param result Result to unwrap the error from
+ * @returns The underlying error of the `Err` result
+ */
+export function unwrapErr<E = unknown>(result: Result<never, E>): E {
+  if (!isResult(result)) {
+    throw new Error(`Unwrapping a non-result value: ${JSON.stringify(result)}`);
+  }
+
+  if (isOk(result)) {
+    throw new Error(`Unwrapping an ok result: ${JSON.stringify(result.Ok)}`);
+  }
+
+  return result.Err;
+}

@@ -148,6 +148,16 @@ describe("ok input", () => {
     expect(RsResult.unwrap(inputResult)).toBe(123);
   });
 
+  test("unwrapping error throws", () => {
+    try {
+      // @ts-expect-error Test
+      RsResult.unwrapErr(inputResult);
+      expect.fail("Should have thrown");
+    } catch (e) {
+      expect(e).toStrictEqual(new Error(`Unwrapping an ok result: 123`));
+    }
+  });
+
   describe("ifOk", () => {
     test("runs callback", () => {
       const fn = vi.fn((value) => value);
@@ -244,6 +254,10 @@ describe("err input", () => {
     }
   });
 
+  test("unwraps error", () => {
+    expect(RsResult.unwrapErr(inputResult)).toStrictEqual("error message");
+  });
+
   describe("ifOk", () => {
     test("doesn't run callback", () => {
       const fn = vi.fn((value) => value);
@@ -276,6 +290,16 @@ describe("non result input", () => {
     try {
       // @ts-expect-error Invalid typed value for the test
       RsResult.unwrap(123);
+      expect.fail("Should have thrown");
+    } catch (e) {
+      expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
+    }
+  });
+
+  test("unwrapping error throws", () => {
+    try {
+      // @ts-expect-error Test
+      RsResult.unwrapErr(123);
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
