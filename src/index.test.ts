@@ -4,14 +4,14 @@ import * as RsResult from ".";
 describe("result input", () => {
   const expectedResult = RsResult.ok(123);
   const inputJson = JSON.stringify(expectedResult);
-  const inputResult: RsResult.Result<number> = JSON.parse(inputJson);
+  const inputResult: unknown = JSON.parse(inputJson);
+
+  test("is equal to expected result", () => {
+    expect(inputResult).toStrictEqual(expectedResult);
+  });
 
   test("has correct type", () => {
-    expectTypeOf(expectedResult).toMatchTypeOf<
-      RsResult.Result<number, never>
-    >();
-
-    expectTypeOf(inputResult).toMatchTypeOf<RsResult.Result<number, unknown>>();
+    expectTypeOf(inputResult).toMatchTypeOf<unknown>();
   });
 
   describe("with extra keys", () => {
@@ -25,6 +25,20 @@ describe("result input", () => {
     });
   });
 
+  test("is result", () => {
+    expect(RsResult.isResult(inputResult)).toBeTruthy();
+  });
+
+  test("has correct type with isResult", () => {
+    if (RsResult.isResult(inputResult)) {
+      expectTypeOf(inputResult).toMatchTypeOf<
+        RsResult.Result<unknown, unknown>
+      >();
+    } else {
+      test.fails("Expected input to be a result");
+    }
+  });
+
   test("is ok", () => {
     expect(RsResult.isOk(inputResult)).toBeTruthy();
   });
@@ -34,12 +48,14 @@ describe("result input", () => {
   });
 
   test("maps to new value", () => {
+    // @ts-expect-error Test
     expect(RsResult.map(inputResult, (value) => value * 2)).toStrictEqual(
       RsResult.ok(246)
     );
   });
 
   test("unwraps with value", () => {
+    // @ts-expect-error Test
     expect(RsResult.unwrap(inputResult)).toBe(123);
   });
 
@@ -47,6 +63,7 @@ describe("result input", () => {
     test("runs callback", () => {
       const fn = vi.fn((value) => value);
 
+      // @ts-expect-error Test
       RsResult.ifOk(inputResult, fn);
 
       expect(fn).toBeCalledWith(123);
@@ -58,6 +75,7 @@ describe("result input", () => {
       const okFn = vi.fn();
       const errFn = vi.fn();
 
+      // @ts-expect-error Test
       RsResult.ifOkOr(inputResult, okFn, errFn);
 
       expect(okFn).toBeCalledWith(123);
@@ -70,6 +88,10 @@ describe("ok input", () => {
   const expectedResult = RsResult.ok(123);
   const inputJson = JSON.stringify(expectedResult);
   const inputResult: RsResult.Result<number, never> = JSON.parse(inputJson);
+
+  test("is equal to expected result", () => {
+    expect(inputResult).toStrictEqual(expectedResult);
+  });
 
   test("has correct type", () => {
     expectTypeOf(expectedResult).toMatchTypeOf<
@@ -88,6 +110,20 @@ describe("ok input", () => {
     test("is not ok", () => {
       expect(RsResult.isOk(inputResult)).toBeFalsy();
     });
+  });
+
+  test("is result", () => {
+    expect(RsResult.isResult(inputResult)).toBeTruthy();
+  });
+
+  test("has correct type with isResult", () => {
+    if (RsResult.isResult(inputResult)) {
+      expectTypeOf(inputResult).toMatchTypeOf<
+        RsResult.Result<unknown, unknown>
+      >();
+    } else {
+      test.fails("Expected input to be a result");
+    }
   });
 
   test("is ok", () => {
@@ -136,6 +172,10 @@ describe("err input", () => {
   const inputJson = JSON.stringify(expectedResult);
   const inputResult: RsResult.Result<never, string> = JSON.parse(inputJson);
 
+  test("is equal to expected result", () => {
+    expect(inputResult).toStrictEqual(expectedResult);
+  });
+
   test("has correct type", () => {
     expectTypeOf(expectedResult).toMatchTypeOf<
       RsResult.Result<never, string>
@@ -151,6 +191,20 @@ describe("err input", () => {
     test("is not err", () => {
       expect(RsResult.isErr(inputResult)).toBeFalsy();
     });
+  });
+
+  test("is result", () => {
+    expect(RsResult.isResult(inputResult)).toBeTruthy();
+  });
+
+  test("has correct type with isResult", () => {
+    if (RsResult.isResult(inputResult)) {
+      expectTypeOf(inputResult).toMatchTypeOf<
+        RsResult.Result<unknown, unknown>
+      >();
+    } else {
+      test.fails("Expected input to be a result");
+    }
   });
 
   test("is err", () => {

@@ -1,22 +1,31 @@
 /**
  * A successful result
+ *
+ * @template T - The value type of the `Ok` result.
  */
 type Ok<T> = { Ok: T };
 
 /**
  * An errored result
+ *
+ * @template E - The error type of the `Err` result.
  */
 type Err<E> = { Err: E };
 
 /**
- * The result of an failable operation
+ * The result of a failable operation
+ *
+ * @template T - The value type of the `Ok` result.
+ * @template E - The error type of the `Err` result.
  */
 export type Result<T, E = unknown> = Ok<T> | Err<E>;
 
 /**
- * Create an ok result value
- * @param value Value to wrap
- * @returns An ok wrapped value result
+ * Creates an `Ok` result value.
+ *
+ * @template T - The value type of the `Ok` result.
+ * @param {T} value - The successful value.
+ * @returns {Ok<T>} An `Ok` result with the successful value.
  */
 export function ok<T>(value: T): Ok<T> {
   return { Ok: value };
@@ -24,6 +33,8 @@ export function ok<T>(value: T): Ok<T> {
 
 /**
  * Create an error result value
+ *
+ * @template E - The error type of the `Err` result.
  * @param value Value to wrap
  * @returns An error wrapped value result
  */
@@ -32,18 +43,19 @@ export function err<E = unknown>(value: E): Err<E> {
 }
 
 /**
- * Check if value is a result value
+ * Check if value is a result
+ *
  * @param value Value to check
  * @returns If value is a result value
  */
-export function isResult<T, E = unknown>(
-  value: unknown
-): value is Result<T, E> {
-  return isOk<T>(value) || isErr<E>(value);
+export function isResult(value: unknown): value is Result<unknown, unknown> {
+  return isOk<unknown>(value) || isErr<unknown>(value);
 }
 
 /**
  * Check if value is an ok result
+ *
+ * @template T - The value type of the `Ok` result.
  * @param value Value to check
  * @returns If value is an ok result
  */
@@ -55,6 +67,8 @@ export function isOk<T>(value: unknown): value is Ok<T> {
 
 /**
  * Check if value is an err result
+ *
+ * @template E - The error type of the `Err` result.
  * @param value Value to check
  * @returns If value is an err result
  */
@@ -66,6 +80,8 @@ export function isErr<E = unknown>(value: unknown): value is Err<E> {
 
 /**
  * Conditionally run function if value is an ok result
+ *
+ * @template T - The value type of the `Ok` result.
  * @param value Value to check
  * @param fn Function to run if value is an ok result
  */
@@ -80,6 +96,9 @@ export function ifOk<T>(
 
 /**
  * Conditionally run ok and err functions if value is an ok or err result
+ *
+ * @template T - The value type of the `Ok` result.
+ * @template E - The error type of the `Err` result.
  * @param value Value to check
  * @param okFn Function to run if value is an ok result
  * @param errFn Function to run if value is an err result
@@ -94,8 +113,12 @@ export function ifOkOr<T>(
 
 /**
  * Map ok result to new value
+ *
+ * @template T - The value type of the `Ok` result.
+ * @template U - The value type of the new `Ok` result.
+ * @template E - The error type of the new `Err` result.
  * @param result Result to map
- * @param fn Mapping function to run on ok result
+ * @param fn Mapping function to run on ok result.  The `value` parameter will be of type `T`.
  * @returns Result containing mapped value
  */
 export function map<T, U, E = unknown>(
@@ -108,27 +131,39 @@ export function map<T, U, E = unknown>(
   return result;
 }
 
-// This function overide produces a type error if an error result is passed
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function unwrap<T, E = unknown>(result: Result<never, E>): never;
+/**
+ * Retrieve the value from an `Err` result.
+ *
+ * This override documents that an error is thrown when unwrapping an `Err` result.
+ *
+ * @param result An `Err` result value
+ * @returns Never
+ */
+export function unwrap(result: Result<never, unknown>): never;
 
-// This function overide produces a type error if an error result is passed
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function unwrap<T, E = unknown>(result: Result<T, never>): T;
-
-// This function overide produces a type error if an error result is passed
-export function unwrap<T, E = unknown>(result: Result<T, E>): T;
+/**
+ * Retrieve the value from an `Ok` result.
+ *
+ * This override is required for type safety for `Ok` results.
+ *
+ * @template T - The value type of the `Ok` result.
+ * @param result Result to unwrap the value from
+ * @returns The successful value of `T` result
+ */
+export function unwrap<T>(result: Result<T, never>): T;
 
 /**
  * Retrieve the value from an ok result
  *
  * Will throw if `result` is an err result
  *
+ * @template T - The value type of the `Ok` result.
+ * @template E - The error type of the `Err` result.
  * @param result Result to unwrap the value from
  * @returns The underlying value of an ok result
  */
 export function unwrap<T, E = unknown>(result: Result<T, E>): T {
-  if (!isResult<T, E>(result)) {
+  if (!isResult(result)) {
     throw new Error(`Unwrapping a non-result value: ${JSON.stringify(result)}`);
   }
 
