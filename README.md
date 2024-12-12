@@ -20,12 +20,17 @@ const success: RsResult.Result<number, never> = RsResult.ok(123);
 assert(RsResult.isOk(success)); // passes
 assert(RsResult.isErr(success)); // fails
 
+// Map successful results
 const mappedSuccess = RsResult.map(success, (value) => value * 2);
 
 assert(RsResult.unwrap(mappedSuccess) === 246);
 
 // Failed Result
 const failed: RsResult.Result<never, string> = RsResult.err("Error message");
+
+// Map error results
+const mappedError = RsResult.mapErr(failed, (value) => `Error: ${value}`);
+assert(RsResult.unwrap(mappedError) === "Error: Error message"); // This assertion will pass
 
 assert(RsResult.isErr(failed)); // passes
 assert(RsResult.isOk(failed)); // fails

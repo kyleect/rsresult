@@ -112,7 +112,7 @@ export function ifOkOr<T>(
 }
 
 /**
- * Map ok result to new value
+ * Map `Ok` result to new value
  *
  * @template T - The value type of the `Ok` result.
  * @template U - The value type of the new `Ok` result.
@@ -125,6 +125,25 @@ export function map<T, U>(result: Result<T>, fn: (value: T) => U): Result<U> {
     return ok(fn(result.Ok));
   }
 
+  return result;
+}
+
+/**
+ * Map `Err` result to new error
+ *
+ * @template E - The error type of the `Err` result.
+ * @template U - The value type of the new `Err` result.
+ * @param result Result to map
+ * @param fn Mapping function to run on err result.  The `value` parameter will be of type `unknown`.
+ * @returns Result containing mapped error
+ */
+export function mapErr<E, U>(
+  result: Result<unknown, E>,
+  fn: (value: E) => U
+): Result<unknown, U> {
+  if (isErr(result)) {
+    return err(fn(result.Err));
+  }
   return result;
 }
 

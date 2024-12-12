@@ -140,6 +140,10 @@ describe("ok input", () => {
     );
   });
 
+  test("does not map to error", () => {
+    expect(RsResult.mapErr(inputResult, (value) => value)).toBe(inputResult);
+  });
+
   test("unwraps with value", () => {
     expect(RsResult.unwrap(inputResult)).toBe(123);
   });
@@ -219,6 +223,14 @@ describe("err input", () => {
     const newResult = RsResult.map(inputResult, (value) => value * 2);
 
     expect(Object.is(inputResult, newResult)).toBeTruthy();
+  });
+
+  test("does map to new error", () => {
+    const newError = RsResult.mapErr(inputResult, (value) =>
+      value.length.toString()
+    );
+
+    expect(newError).toStrictEqual(RsResult.err("13"));
   });
 
   test("unwrapping throws", () => {
