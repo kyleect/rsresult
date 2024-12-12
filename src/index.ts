@@ -226,13 +226,34 @@ export function expect<T>(result: Result<T, unknown>, message: string): T {
 }
 
 /**
+ * Retrieve the value from an `Err` result.
+ *
+ * This override documents that an error is thrown when unwrapping an `Err` result.
+ *
+ * @param result An `Err` result value
+ * @returns Never
+ */
+export function unwrapErr(result: Result<unknown, never>): never;
+
+/**
+ * Retrieve the error from an `Ok` result.
+ *
+ * This override is required for type safety for `Ok` results.
+ *
+ * @template E - The error type of the `Err` result.
+ * @param result Result to unwrap the value from
+ * @returns The error value of `E` result
+ */
+export function unwrapErr<E = unknown>(result: Result<unknown, E>): E;
+
+/**
  * Retrieve the underlying error from an `Err` result.
  *
  * @template E - The error type of the `Err` result.
  * @param result Result to unwrap the error from
  * @returns The underlying error of the `Err` result
  */
-export function unwrapErr<E = unknown>(result: Result<never, E>): E {
+export function unwrapErr<E = unknown>(result: Result<unknown, E>): E {
   if (!isResult(result)) {
     throw new Error(`Unwrapping a non-result value: ${JSON.stringify(result)}`);
   }

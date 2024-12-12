@@ -154,8 +154,11 @@ describe("ok input", () => {
 
   test("unwrapping error throws", () => {
     try {
-      // @ts-expect-error Test
-      RsResult.unwrapErr(inputResult);
+      const result = RsResult.unwrapErr(inputResult);
+
+      expectTypeOf(result).toMatchTypeOf<never>();
+
+      // Ensure that unwrapErr throws
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(new Error(`Unwrapping an ok result: 123`));
@@ -249,7 +252,11 @@ describe("err input", () => {
 
   test("unwrapping throws", () => {
     try {
-      RsResult.unwrap(inputResult);
+      const result = RsResult.unwrap(inputResult);
+
+      expectTypeOf(result).toMatchTypeOf<never>();
+
+      // Ensure that unwrap throws
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(
@@ -260,7 +267,11 @@ describe("err input", () => {
 
   test("expecting throws", () => {
     try {
-      RsResult.expect(inputResult, "Custom error message");
+      const result = RsResult.expect(inputResult, "Custom error message");
+
+      expectTypeOf(result).toMatchTypeOf<never>();
+
+      // Ensure that expect throws
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(
@@ -303,10 +314,14 @@ describe("non result input", () => {
 
   test("unwrapping throws", () => {
     try {
-      RsResult.unwrap(
+      const result = RsResult.unwrap(
         // @ts-expect-error Invalid typed value for the test
         123
       );
+
+      expectTypeOf(result).toMatchTypeOf<never>();
+
+      // Ensure that unwrap throws
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
@@ -315,11 +330,15 @@ describe("non result input", () => {
 
   test("expecting throws", () => {
     try {
-      RsResult.expect(
+      const result = RsResult.expect(
         // @ts-expect-error Invalid typed value for the test
         123,
         "Custom error message"
       );
+
+      expectTypeOf(result).toMatchTypeOf<never>();
+
+      // Ensure that unwrap throws
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
@@ -328,8 +347,14 @@ describe("non result input", () => {
 
   test("unwrapping error throws", () => {
     try {
-      // @ts-expect-error Test
-      RsResult.unwrapErr(123);
+      const result = RsResult.unwrapErr(
+        // @ts-expect-error Test
+        123
+      );
+
+      expectTypeOf(result).toMatchTypeOf<never>();
+
+      // Ensure that unwrap throws
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
