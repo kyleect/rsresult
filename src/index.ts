@@ -117,7 +117,6 @@ export function unwrap<T, E = unknown>(result: Result<never, E>): never;
 export function unwrap<T, E = unknown>(result: Result<T, never>): T;
 
 // This function overide produces a type error if an error result is passed
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function unwrap<T, E = unknown>(result: Result<T, E>): T;
 
 /**
