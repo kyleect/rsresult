@@ -148,6 +148,10 @@ describe("ok input", () => {
     expect(RsResult.unwrap(inputResult)).toBe(123);
   });
 
+  test("expecting returns value", () => {
+    expect(RsResult.expect(inputResult, "Custom error message")).toBe(123);
+  });
+
   test("unwrapping error throws", () => {
     try {
       // @ts-expect-error Test
@@ -254,6 +258,17 @@ describe("err input", () => {
     }
   });
 
+  test("expecting throws", () => {
+    try {
+      RsResult.expect(inputResult, "Custom error message");
+      expect.fail("Should have thrown");
+    } catch (e) {
+      expect(e).toStrictEqual(
+        new Error(`Custom error message: "error message"`)
+      );
+    }
+  });
+
   test("unwraps error", () => {
     expect(RsResult.unwrapErr(inputResult)).toStrictEqual("error message");
   });
@@ -288,8 +303,23 @@ describe("non result input", () => {
 
   test("unwrapping throws", () => {
     try {
-      // @ts-expect-error Invalid typed value for the test
-      RsResult.unwrap(123);
+      RsResult.unwrap(
+        // @ts-expect-error Invalid typed value for the test
+        123
+      );
+      expect.fail("Should have thrown");
+    } catch (e) {
+      expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
+    }
+  });
+
+  test("expecting throws", () => {
+    try {
+      RsResult.expect(
+        // @ts-expect-error Invalid typed value for the test
+        123,
+        "Custom error message"
+      );
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
