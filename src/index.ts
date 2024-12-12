@@ -126,8 +126,9 @@ export function map<T, U, E = unknown>(
   fn: (value: T) => U
 ): Result<U, E> {
   if (isOk(result)) {
-    return { Ok: fn(result.Ok) };
+    return ok(fn(result.Ok));
   }
+
   return result;
 }
 
