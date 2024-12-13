@@ -108,20 +108,26 @@ describe("result parsed from json", () => {
 });
 
 describe("ok input", () => {
-  const expectedResult = RsResult.ok(123);
+  const expectedResult: RsResult.Ok<number> = RsResult.ok(123);
   const inputJson = JSON.stringify(expectedResult);
-  const inputResult: RsResult.Result<number, never> = JSON.parse(inputJson);
+  const inputResult: RsResult.Ok<number> = JSON.parse(inputJson);
 
   test("is equal to expected result", () => {
     expect(inputResult).toStrictEqual(expectedResult);
   });
 
-  test("has correct type", () => {
+  test("has correct type (Result)", () => {
     expectTypeOf(expectedResult).toMatchTypeOf<
       RsResult.Result<number, never>
     >();
 
     expectTypeOf(inputResult).toMatchTypeOf<RsResult.Result<number, never>>();
+  });
+
+  test("has correct type (Ok)", () => {
+    expectTypeOf(expectedResult).toMatchTypeOf<RsResult.Ok<number>>();
+
+    expectTypeOf(inputResult).toMatchTypeOf<RsResult.Ok<number>>();
   });
 
   describe("with extra keys", () => {
@@ -220,17 +226,21 @@ describe("err input", () => {
     expect(inputResult).toStrictEqual(expectedResult);
   });
 
-  test("has correct type", () => {
+  test("has correct type (Result)", () => {
     expectTypeOf(expectedResult).toMatchTypeOf<
       RsResult.Result<never, string>
     >();
+  });
+
+  test("has correct type (Err)", () => {
+    expectTypeOf(expectedResult).toMatchTypeOf<RsResult.Err<string>>();
   });
 
   describe("with extra keys", () => {
     const inputJson = JSON.stringify(
       Object.assign({}, RsResult.err("error message"), { extraKey: true })
     );
-    const inputResult: RsResult.Result<never, string> = JSON.parse(inputJson);
+    const inputResult: RsResult.Err<string> = JSON.parse(inputJson);
 
     test("is not err", () => {
       expect(RsResult.isErr(inputResult)).toBeFalsy();

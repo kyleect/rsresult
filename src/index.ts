@@ -3,14 +3,14 @@
  *
  * @template T - The value type of the `Ok` result.
  */
-type Ok<T> = { Ok: T };
+export type Ok<T> = { Ok: T };
 
 /**
  * An errored result
  *
  * @template E - The error type of the `Err` result.
  */
-type Err<E> = { Err: E };
+export type Err<E> = { Err: E };
 
 /**
  * The result of a failable operation

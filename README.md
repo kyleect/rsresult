@@ -19,7 +19,7 @@ import assert from "node:assert";
 import * as RsResult from "rsresult";
 
 // Successful Result
-const success: RsResult.Result<number, never> = RsResult.ok(123);
+const success: RsResult.Ok<number> = RsResult.ok(123);
 
 assert(RsResult.isOk(success)); // passes
 assert(RsResult.isErr(success)); // fails
