@@ -1,12 +1,12 @@
 # rsresult
 
-A library to work with [serde_json](https://github.com/serde-rs/json) serialized `Result` objects. This library provides functions for creating, checking, and manipulating results, simplifying error handling in your JavaScript projects.
-
 [![ci](https://github.com/kyleect/rsresult/actions/workflows/ci.yml/badge.svg)](https://github.com/kyleect/rsresult/actions/workflows/ci.yml)
 
-![NPM Version](https://img.shields.io/npm/v/rsresult)
+A library to work with [serde_json](https://github.com/serde-rs/json) serialized `Result` objects. This library provides functions for creating, checking, and manipulating results, simplifying error handling in your JavaScript projects.
 
 ## Installation
+
+![NPM Version](https://img.shields.io/npm/v/rsresult)
 
 ```bash
 npm install rsresult
