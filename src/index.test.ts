@@ -1,70 +1,89 @@
 import { test, expect, describe, vi, expectTypeOf } from "vitest";
 import * as RsResult from ".";
 
-describe("result input", () => {
+/**
+ * Test suite for parsing a JSON string into an RsResult object with an unknown
+ * type.
+ */
+describe("result parsed from json", () => {
   const expectedResult = RsResult.ok(123);
   const inputJson = JSON.stringify(expectedResult);
-  const inputResult: unknown = JSON.parse(inputJson);
+  const result: unknown = JSON.parse(inputJson);
 
   test("is equal to expected result", () => {
-    expect(inputResult).toStrictEqual(expectedResult);
+    expect(result).toStrictEqual(expectedResult);
   });
 
   test("has correct type", () => {
-    expectTypeOf(inputResult).toMatchTypeOf<unknown>();
+    expectTypeOf(result).toMatchTypeOf<unknown>();
   });
 
   describe("with extra keys", () => {
     const inputJson = JSON.stringify(
       Object.assign({}, RsResult.ok(123), { extraKey: true })
     );
-    const inputResult: RsResult.Result<number, never> = JSON.parse(inputJson);
+
+    const result: RsResult.Result<number, never> = JSON.parse(inputJson);
+
+    test("is not result", () => {
+      expect(RsResult.isResult(result)).toBeFalsy();
+    });
 
     test("is not ok", () => {
-      expect(RsResult.isOk(inputResult)).toBeFalsy();
+      expect(RsResult.isOk(result)).toBeFalsy();
     });
   });
 
   test("is result", () => {
-    expect(RsResult.isResult(inputResult)).toBeTruthy();
+    expect(RsResult.isResult(result)).toBeTruthy();
   });
 
   test("has correct type with isResult", () => {
-    if (RsResult.isResult(inputResult)) {
-      expectTypeOf(inputResult).toMatchTypeOf<
-        RsResult.Result<unknown, unknown>
-      >();
+    if (RsResult.isResult(result)) {
+      expectTypeOf(result).toMatchTypeOf<RsResult.Result<unknown, unknown>>();
     } else {
       test.fails("Expected input to be a result");
     }
   });
 
   test("is ok", () => {
-    expect(RsResult.isOk(inputResult)).toBeTruthy();
+    expect(RsResult.isOk(result)).toBeTruthy();
   });
 
   test("is not err", () => {
-    expect(RsResult.isErr(inputResult)).toBeFalsy();
+    expect(RsResult.isErr(result)).toBeFalsy();
   });
 
   test("maps to new value", () => {
-    // @ts-expect-error Test
-    expect(RsResult.map(inputResult, (value) => value * 2)).toStrictEqual(
-      RsResult.ok(246)
-    );
+    expect(
+      RsResult.map(
+        // @ts-expect-error Test
+        result,
+        (value) =>
+          // @ts-expect-error Test
+          value * 2
+      )
+    ).toStrictEqual(RsResult.ok(246));
   });
 
   test("unwraps with value", () => {
-    // @ts-expect-error Test
-    expect(RsResult.unwrap(inputResult)).toBe(123);
+    expect(
+      RsResult.unwrap(
+        // @ts-expect-error Test
+        result
+      )
+    ).toBe(123);
   });
 
   describe("ifOk", () => {
     test("runs callback", () => {
       const fn = vi.fn((value) => value);
 
-      // @ts-expect-error Test
-      RsResult.ifOk(inputResult, fn);
+      RsResult.ifOk(
+        // @ts-expect-error Test
+        result,
+        fn
+      );
 
       expect(fn).toBeCalledWith(123);
     });
@@ -75,8 +94,12 @@ describe("result input", () => {
       const okFn = vi.fn();
       const errFn = vi.fn();
 
-      // @ts-expect-error Test
-      RsResult.ifOkOr(inputResult, okFn, errFn);
+      RsResult.ifOkOr(
+        // @ts-expect-error Test
+        result,
+        okFn,
+        errFn
+      );
 
       expect(okFn).toBeCalledWith(123);
       expect(errFn).not.toBeCalled();
