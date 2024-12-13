@@ -37,7 +37,7 @@ try {
 }
 
 // Failed Result
-const failed: RsResult.Result<never, string> = RsResult.err("Error message");
+const failed: RsResult.Err<string> = RsResult.err("Error message");
 
 // Map error results
 const mappedError = RsResult.mapErr(failed, (value) => `Error: ${value}`);
