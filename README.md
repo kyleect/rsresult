@@ -4,6 +4,8 @@
 
 A library to work with [serde_json](https://github.com/serde-rs/json) serialized `Result` objects. This library provides functions for creating, checking, and manipulating results, simplifying error handling in your JavaScript projects.
 
+[API Documentation](https://kyleect.github.io/rsresult/)
+
 ## Installation
 
 ![NPM Version](https://img.shields.io/npm/v/rsresult)
