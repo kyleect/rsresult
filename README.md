@@ -4,6 +4,8 @@ A library to work with [serde_json](https://github.com/serde-rs/json) serialized
 
 [![ci](https://github.com/kyleect/rsresult/actions/workflows/ci.yml/badge.svg)](https://github.com/kyleect/rsresult/actions/workflows/ci.yml)
 
+![NPM Version](https://img.shields.io/npm/v/rsresult)
+
 ## Installation
 
 ```bash
