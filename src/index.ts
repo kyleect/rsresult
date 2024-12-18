@@ -60,6 +60,14 @@ export function isResult(value: unknown): value is Result<unknown, unknown> {
  * @returns If value is an ok result
  */
 export function isOk<T>(value: unknown): value is Ok<T> {
+  if (typeof value === "undefined") {
+    return false;
+  }
+
+  if (value === null) {
+    return false;
+  }
+
   const keys = Object.keys(value as object);
 
   return keys.includes("Ok") && keys.length === 1;
@@ -73,6 +81,14 @@ export function isOk<T>(value: unknown): value is Ok<T> {
  * @returns If value is an err result
  */
 export function isErr<E = unknown>(value: unknown): value is Err<E> {
+  if (typeof value === "undefined") {
+    return false;
+  }
+
+  if (value === null) {
+    return false;
+  }
+
   const keys = Object.keys(value as object);
 
   return keys.includes("Err") && keys.length === 1;

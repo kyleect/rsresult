@@ -351,9 +351,38 @@ describe.each([
     value: 123,
     string: "123",
   },
+  {
+    title: "boolean",
+    value: true,
+    string: "true",
+  },
+  {
+    title: "null",
+    value: null,
+    string: "null",
+  },
+  {
+    title: "undefined",
+    value: undefined,
+    string: "undefined",
+  },
+  {
+    title: "array",
+    value: [1, 2, 3],
+    string: "[1,2,3]",
+  },
+  {
+    title: "string",
+    value: "Hello, world!",
+    string: '"Hello, world!"',
+  },
 ])("non result input: $title", ({ value, string }) => {
   test("is not ok", () => {
     expect(RsResult.isOk(value)).toBeFalsy();
+  });
+
+  test("is not err", () => {
+    expect(RsResult.isErr(value)).toBeFalsy();
   });
 
   test("unwrapping throws", () => {
