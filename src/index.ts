@@ -195,7 +195,17 @@ export function unwrap<T>(result: Result<T, never>): T;
  * @returns The underlying value of an ok result
  */
 export function unwrap<T, E = unknown>(result: Result<T, E>): T {
-  return expect<T>(result, "Unwrapping an error result");
+  if (!isResult(result)) {
+    throw new Error(`Unwrapping a non-result value: ${JSON.stringify(result)}`);
+  }
+
+  if (isErr(result)) {
+    throw new Error(
+      `Unwrapping an error result: ${JSON.stringify(result.Err)}`
+    );
+  }
+
+  return result.Ok;
 }
 
 /**
@@ -231,7 +241,9 @@ export function expect<T>(result: Result<T, unknown>, message: string): T;
  */
 export function expect<T>(result: Result<T, unknown>, message: string): T {
   if (!isResult(result)) {
-    throw new Error(`Unwrapping a non-result value: ${JSON.stringify(result)}`);
+    throw new Error(
+      `${message}: Expecting result from a non-result value: ${JSON.stringify(result)}`
+    );
   }
 
   if (isErr(result)) {

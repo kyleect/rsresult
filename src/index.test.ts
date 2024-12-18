@@ -417,7 +417,9 @@ describe.each([
       expect.fail("Should have thrown");
     } catch (e) {
       expect(e).toStrictEqual(
-        new Error(`Unwrapping a non-result value: ${string}`)
+        new Error(
+          `Custom error message: Expecting result from a non-result value: ${string}`
+        )
       );
     }
   });
