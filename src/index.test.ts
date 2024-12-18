@@ -340,16 +340,27 @@ describe("err input", () => {
   });
 });
 
-describe("non result input", () => {
+describe.each([
+  {
+    title: "object",
+    value: {},
+    string: "{}",
+  },
+  {
+    title: "number",
+    value: 123,
+    string: "123",
+  },
+])("non result input: $title", ({ value, string }) => {
   test("is not ok", () => {
-    expect(RsResult.isOk({})).toBeFalsy();
+    expect(RsResult.isOk(value)).toBeFalsy();
   });
 
   test("unwrapping throws", () => {
     try {
       const result = RsResult.unwrap(
         // @ts-expect-error Invalid typed value for the test
-        123
+        value
       );
 
       expectTypeOf(result).toMatchTypeOf<never>();
@@ -357,7 +368,9 @@ describe("non result input", () => {
       // Ensure that unwrap throws
       expect.fail("Should have thrown");
     } catch (e) {
-      expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
+      expect(e).toStrictEqual(
+        new Error(`Unwrapping a non-result value: ${string}`)
+      );
     }
   });
 
@@ -365,7 +378,7 @@ describe("non result input", () => {
     try {
       const result = RsResult.expect(
         // @ts-expect-error Invalid typed value for the test
-        123,
+        value,
         "Custom error message"
       );
 
@@ -374,7 +387,9 @@ describe("non result input", () => {
       // Ensure that unwrap throws
       expect.fail("Should have thrown");
     } catch (e) {
-      expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
+      expect(e).toStrictEqual(
+        new Error(`Unwrapping a non-result value: ${string}`)
+      );
     }
   });
 
@@ -382,7 +397,7 @@ describe("non result input", () => {
     try {
       const result = RsResult.unwrapErr(
         // @ts-expect-error Test
-        123
+        value
       );
 
       expectTypeOf(result).toMatchTypeOf<never>();
@@ -390,7 +405,9 @@ describe("non result input", () => {
       // Ensure that unwrap throws
       expect.fail("Should have thrown");
     } catch (e) {
-      expect(e).toStrictEqual(new Error(`Unwrapping a non-result value: 123`));
+      expect(e).toStrictEqual(
+        new Error(`Unwrapping a non-result value: ${string}`)
+      );
     }
   });
 });
